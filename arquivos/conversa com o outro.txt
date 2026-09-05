@@ -1,0 +1,1603 @@
+Fala bb. Pelas fotos do quadro e pelo material do Figma que você mandou, dá para montar isso de um jeito bem organizado e exatamente com a ideia que o professor desenhou.
+
+Eu também dei uma olhada no seu material do DuoHeart. Você já tem várias telas prontas como referência visual: tela inicial, login, criação de conta, interesses, nível, dias de treino, horários, exercícios, resultado, menu etc. Então não precisamos redesenhar o aplicativo agora. A ideia dessa atividade é pegar os elementos que se repetem nessas telas e transformar em um Design System reutilizável no Flutter.
+
+Pelo quadro, a estrutura esperada parece ser:
+
+COMPONENTS
+ ├── Action Button
+ ├── Tab Bar
+ └── List Items
+
+COMMON
+ └── recursos compartilhados
+
+SCREENS
+ ├── Sample Action Button Screen
+ ├── Sample Tab Bar Screen
+ └── Sample Screen
+
+MAIN
+
+Action Button
+ ├── ViewModel
+ ├── Component
+ └── Factory
+
+FIGMA
+ └── referência
+
+GITHUB
+ ├── código
+ └── documentação
+
+E no quadro aparece também "2 componentes", então aparentemente o mínimo solicitado é dois. Eu faria 3 componentes, porque Action Button, Tab Bar e List Items já estão explicitamente desenhados pelo professor.
+
+1. Como vamos organizar o DuoHeart
+
+A estrutura que eu recomendo é esta:
+
+duoheart/
+│
+├── assets/
+│   ├── images/
+│   │   └── duo_mascot.png
+│   │
+│   └── icons/
+│
+├── docs/
+│   └── figma/
+│       └── referencias/
+│
+├── lib/
+│   │
+│   ├── common/
+│   │   ├── theme/
+│   │   │   ├── app_colors.dart
+│   │   │   ├── app_text_styles.dart
+│   │   │   ├── app_spacing.dart
+│   │   │   ├── app_radius.dart
+│   │   │   └── app_theme.dart
+│   │   │
+│   │   └── constants/
+│   │       └── app_assets.dart
+│   │
+│   ├── components/
+│   │   │
+│   │   ├── action_button/
+│   │   │   ├── action_button_component.dart
+│   │   │   ├── action_button_view_model.dart
+│   │   │   └── action_button_factory.dart
+│   │   │
+│   │   ├── duo_tab_bar/
+│   │   │   ├── duo_tab_bar_component.dart
+│   │   │   └── duo_tab_item.dart
+│   │   │
+│   │   └── list_item/
+│   │       └── list_item_component.dart
+│   │
+│   ├── screens/
+│   │   ├── design_system_home_screen.dart
+│   │   ├── sample_action_button_screen.dart
+│   │   ├── sample_tab_bar_screen.dart
+│   │   └── sample_list_item_screen.dart
+│   │
+│   └── main.dart
+│
+├── test/
+│   └── components/
+│
+├── pubspec.yaml
+│
+└── README.md
+
+Essa estrutura bate bem com o que está desenhado no quadro.
+
+2. Primeiro: não faça as telas do aplicativo ainda
+
+Esse ponto é importante.
+
+Você tem no Figma telas como:
+
+Tela Inicial
+Login
+Criar Conta
+Montando Perfil
+Selecionando Interesses
+Nível Atual
+Gostos
+Dias
+Horário
+Exercícios
+Resultado
+Menu Inicial
+...
+
+Mas antes de sair criando essas telas, vamos construir as peças reutilizáveis.
+
+Por exemplo, seu botão:
+
+Comece Agora
+
+e o botão:
+
+Continuar
+
+e:
+
+Finalizar
+
+visualmente são praticamente o mesmo componente.
+
+Então NÃO faremos:
+
+ElevatedButton(...)
+
+diferente em cada tela.
+
+Vamos criar:
+
+DuoActionButton
+
+uma vez.
+
+E usar:
+
+DuoActionButton(...)
+
+em todas as telas.
+
+É justamente esse o objetivo de um Design System.
+
+3. Começando o projeto
+
+Se você já tem seu projeto Flutter, não precisa criar outro.
+
+Dentro dele crie as pastas:
+
+lib/common
+lib/components
+lib/screens
+
+Depois:
+
+lib/common/theme
+lib/common/constants
+
+E:
+
+lib/components/action_button
+lib/components/duo_tab_bar
+lib/components/list_item
+4. Assets do DuoHeart
+
+No ZIP do Figma existe o mascote do DuoHeart separado das telas. Eu usaria ele como asset principal.
+
+Crie:
+
+assets/images/
+
+E coloque o mascote como:
+
+assets/images/duo_mascot.png
+
+Eu recomendo renomear os arquivos porque nomes como:
+
+Captura de tela 2025-03...
+
+ficam ruins no código.
+
+No pubspec.yaml:
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+Depois rode:
+
+flutter pub get
+5. COMMON
+
+Agora começamos o Design System de verdade.
+
+Tudo que for utilizado em vários componentes entra em:
+
+common
+
+Exemplo:
+
+cores
+fontes
+espaçamentos
+bordas
+assets
+tema
+
+Isso corresponde ao trecho do quadro:
+
+COMMON
+    recursos em comum
+6. app_colors.dart
+
+Crie:
+
+lib/common/theme/app_colors.dart
+
+Coloque:
+
+import 'package:flutter/material.dart';
+
+class AppColors {
+  AppColors._();
+
+  static const Color background = Color(0xFFB8D8B3);
+
+  static const Color primary = Color(0xFF48ED99);
+
+  static const Color dark = Color(0xFF234142);
+
+  static const Color white = Color(0xFFFFFFFF);
+
+  static const Color black = Color(0xFF000000);
+
+  static const Color gray = Color(0xFF9E9E9E);
+
+  static const Color lightGray = Color(0xFFF5F5F5);
+}
+
+O fundo aproximado do seu Figma é aquele verde claro do DuoHeart.
+
+Depois podemos pegar os valores exatos do Figma.
+
+O importante agora é:
+
+não colocar Color(...) espalhado pelas telas
+
+Tudo vem daqui.
+
+7. app_spacing.dart
+
+Crie:
+
+lib/common/theme/app_spacing.dart
+class AppSpacing {
+  AppSpacing._();
+
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 16;
+  static const double lg = 24;
+  static const double xl = 32;
+}
+
+Agora ao invés de:
+
+SizedBox(height: 16)
+
+podemos usar:
+
+SizedBox(height: AppSpacing.md)
+
+Isso é Design System.
+
+8. app_radius.dart
+
+Crie:
+
+lib/common/theme/app_radius.dart
+class AppRadius {
+  AppRadius._();
+
+  static const double small = 8;
+  static const double medium = 12;
+  static const double large = 20;
+}
+9. app_text_styles.dart
+
+Crie:
+
+lib/common/theme/app_text_styles.dart
+import 'package:flutter/material.dart';
+
+import 'app_colors.dart';
+
+class AppTextStyles {
+  AppTextStyles._();
+
+  static const TextStyle title = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.bold,
+    color: AppColors.black,
+  );
+
+  static const TextStyle subtitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColors.dark,
+  );
+
+  static const TextStyle body = TextStyle(
+    fontSize: 16,
+    color: AppColors.dark,
+  );
+
+  static const TextStyle button = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+}
+10. app_theme.dart
+
+Crie:
+
+lib/common/theme/app_theme.dart
+import 'package:flutter/material.dart';
+
+import 'app_colors.dart';
+
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData get theme {
+    return ThemeData(
+      useMaterial3: true,
+
+      scaffoldBackgroundColor: AppColors.background,
+
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+      ),
+
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        centerTitle: true,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.white,
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Agora seu aplicativo inteiro compartilha o mesmo tema.
+
+11. Assets centralizados
+
+Crie:
+
+lib/common/constants/app_assets.dart
+class AppAssets {
+  AppAssets._();
+
+  static const String mascot =
+      'assets/images/duo_mascot.png';
+}
+
+Assim você não fica escrevendo:
+
+'assets/images/duo_mascot.png'
+
+em 20 arquivos diferentes.
+
+Você usa:
+
+AppAssets.mascot
+12. COMPONENTE 1 — Action Button
+
+Esse é o mais importante porque o professor colocou:
+
+ACTION BUTTON
+     ↓
+ViewModel
+Component
+Factory
+
+Então vamos fazer exatamente assim.
+
+Estrutura:
+
+components/
+    action_button/
+        action_button_component.dart
+        action_button_view_model.dart
+        action_button_factory.dart
+13. ActionButton ViewModel
+
+Crie:
+
+lib/components/action_button/action_button_view_model.dart
+import 'package:flutter/material.dart';
+
+enum ActionButtonVariant {
+  primary,
+  secondary,
+}
+
+class ActionButtonViewModel {
+  final String text;
+
+  final VoidCallback? onPressed;
+
+  final ActionButtonVariant variant;
+
+  final bool isLoading;
+
+  final bool enabled;
+
+  const ActionButtonViewModel({
+    required this.text,
+    required this.onPressed,
+    this.variant = ActionButtonVariant.primary,
+    this.isLoading = false,
+    this.enabled = true,
+  });
+}
+
+O ViewModel guarda os dados necessários para o componente.
+
+Exemplo:
+
+texto
+ação
+tipo
+carregando
+habilitado
+14. Action Button Component
+
+Crie:
+
+lib/components/action_button/action_button_component.dart
+import 'package:flutter/material.dart';
+
+import '../../common/theme/app_colors.dart';
+import '../../common/theme/app_radius.dart';
+import '../../common/theme/app_text_styles.dart';
+
+import 'action_button_view_model.dart';
+
+class DuoActionButton extends StatelessWidget {
+  final ActionButtonViewModel viewModel;
+
+  const DuoActionButton({
+    super.key,
+    required this.viewModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    final bool primary =
+        viewModel.variant == ActionButtonVariant.primary;
+
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+
+      child: ElevatedButton(
+
+        onPressed:
+            viewModel.enabled && !viewModel.isLoading
+                ? viewModel.onPressed
+                : null,
+
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              primary
+                  ? AppColors.white
+                  : AppColors.primary,
+
+          foregroundColor:
+              primary
+                  ? AppColors.gray
+                  : AppColors.dark,
+
+          elevation: 0,
+
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              AppRadius.medium,
+            ),
+          ),
+        ),
+
+        child:
+            viewModel.isLoading
+                ? const CircularProgressIndicator()
+                : Text(
+                    viewModel.text,
+                    style: AppTextStyles.button,
+                  ),
+      ),
+    );
+  }
+}
+
+Agora temos nosso componente visual.
+
+15. Action Button Factory
+
+Agora:
+
+lib/components/action_button/action_button_factory.dart
+import 'package:flutter/material.dart';
+
+import 'action_button_view_model.dart';
+
+class ActionButtonFactory {
+
+  ActionButtonFactory._();
+
+  static ActionButtonViewModel primary({
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return ActionButtonViewModel(
+      text: text,
+      onPressed: onPressed,
+      variant: ActionButtonVariant.primary,
+    );
+  }
+
+  static ActionButtonViewModel secondary({
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return ActionButtonViewModel(
+      text: text,
+      onPressed: onPressed,
+      variant: ActionButtonVariant.secondary,
+    );
+  }
+}
+
+Agora conseguimos fazer:
+
+DuoActionButton(
+  viewModel: ActionButtonFactory.primary(
+    text: 'Continuar',
+    onPressed: () {},
+  ),
+)
+
+Ou:
+
+DuoActionButton(
+  viewModel: ActionButtonFactory.secondary(
+    text: 'Comece Agora',
+    onPressed: () {},
+  ),
+)
+
+Isso bate bem com:
+
+VIEWMODEL
+COMPONENT
+FACTORY
+
+do quadro.
+
+16. COMPONENTE 2 — Tab Bar
+
+Nas telas do DuoHeart você tem aquela navegação inferior com vários ícones.
+
+Então faz sentido transformar aquilo no segundo componente.
+
+Estrutura:
+
+components/
+    duo_tab_bar/
+        duo_tab_item.dart
+        duo_tab_bar_component.dart
+
+Evitei chamar simplesmente:
+
+TabBar
+
+porque o próprio Flutter já possui um widget chamado TabBar.
+
+Por isso:
+
+DuoTabBar
+17. duo_tab_item.dart
+import 'package:flutter/material.dart';
+
+class DuoTabItem {
+  final IconData icon;
+
+  final String label;
+
+  const DuoTabItem({
+    required this.icon,
+    required this.label,
+  });
+}
+18. duo_tab_bar_component.dart
+import 'package:flutter/material.dart';
+
+import '../../common/theme/app_colors.dart';
+
+import 'duo_tab_item.dart';
+
+class DuoTabBar extends StatelessWidget {
+
+  final List<DuoTabItem> items;
+
+  final int selectedIndex;
+
+  final ValueChanged<int> onChanged;
+
+  const DuoTabBar({
+    super.key,
+    required this.items,
+    required this.selectedIndex,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+      height: 64,
+
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+
+      child: Row(
+        children: List.generate(
+          items.length,
+          (index) {
+
+            final item = items[index];
+
+            final selected =
+                index == selectedIndex;
+
+            return Expanded(
+              child: InkWell(
+                onTap: () => onChanged(index),
+
+                child: Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
+
+                  children: [
+
+                    Icon(
+                      item.icon,
+                      color: selected
+                          ? AppColors.primary
+                          : AppColors.black,
+                    ),
+
+                    Text(
+                      item.label,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: selected
+                            ? AppColors.primary
+                            : AppColors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+19. COMPONENTE 3 — List Item
+
+Esse terceiro componente aparece muito no seu Figma.
+
+Por exemplo:
+
+Alimentação
+Exercício físico
+Monitorar progresso
+Plano exercício
+Saúde e bem-estar
+Metas e preparação
+
+Ou categorias.
+
+Estrutura:
+
+components/
+    list_item/
+        list_item_component.dart
+20. list_item_component.dart
+import 'package:flutter/material.dart';
+
+import '../../common/theme/app_colors.dart';
+
+class DuoListItem extends StatelessWidget {
+
+  final String title;
+
+  final String? subtitle;
+
+  final IconData? icon;
+
+  final Widget? trailing;
+
+  final VoidCallback? onTap;
+
+  const DuoListItem({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.icon,
+    this.trailing,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Card(
+      color: AppColors.white,
+      elevation: 0,
+
+      child: ListTile(
+
+        onTap: onTap,
+
+        leading:
+            icon != null
+                ? Icon(icon)
+                : null,
+
+        title: Text(title),
+
+        subtitle:
+            subtitle != null
+                ? Text(subtitle!)
+                : null,
+
+        trailing: trailing,
+      ),
+    );
+  }
+}
+
+Agora você tem os 3 componentes que aparecem no quadro:
+
+Action Button
+Tab Bar
+List Items
+21. SCREENS
+
+Agora vem outra parte do quadro:
+
+SCREENS
+
+Sample Action Button Screen
+
+Sample Tab Bar Screen
+
+Sample Screen
+
+Isso NÃO são ainda as telas oficiais do DuoHeart.
+
+São telas para demonstrar seu Design System.
+
+É como um catálogo.
+
+22. Sample Action Button Screen
+
+Crie:
+
+lib/screens/sample_action_button_screen.dart
+import 'package:flutter/material.dart';
+
+import '../common/theme/app_spacing.dart';
+
+import '../components/action_button/action_button_component.dart';
+import '../components/action_button/action_button_factory.dart';
+
+class SampleActionButtonScreen extends StatelessWidget {
+
+  const SampleActionButtonScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: const Text(
+          'Action Button',
+        ),
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(
+          AppSpacing.md,
+        ),
+
+        child: Column(
+          children: [
+
+            DuoActionButton(
+              viewModel:
+                  ActionButtonFactory.primary(
+                text: 'Continuar',
+                onPressed: () {},
+              ),
+            ),
+
+            const SizedBox(
+              height: AppSpacing.md,
+            ),
+
+            DuoActionButton(
+              viewModel:
+                  ActionButtonFactory.secondary(
+                text: 'Comece Agora',
+                onPressed: () {},
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+23. Sample Tab Bar Screen
+
+Crie:
+
+lib/screens/sample_tab_bar_screen.dart
+import 'package:flutter/material.dart';
+
+import '../components/duo_tab_bar/duo_tab_bar_component.dart';
+import '../components/duo_tab_bar/duo_tab_item.dart';
+
+class SampleTabBarScreen
+    extends StatefulWidget {
+
+  const SampleTabBarScreen({
+    super.key,
+  });
+
+  @override
+  State<SampleTabBarScreen> createState() =>
+      _SampleTabBarScreenState();
+}
+
+class _SampleTabBarScreenState
+    extends State<SampleTabBarScreen> {
+
+  int selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: const Text(
+          'Tab Bar',
+        ),
+      ),
+
+      body: Center(
+        child: Text(
+          'Item selecionado: $selectedIndex',
+        ),
+      ),
+
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+
+        child: DuoTabBar(
+
+          selectedIndex: selectedIndex,
+
+          onChanged: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+
+          items: const [
+
+            DuoTabItem(
+              icon: Icons.home,
+              label: 'Home',
+            ),
+
+            DuoTabItem(
+              icon: Icons.list,
+              label: 'Plano',
+            ),
+
+            DuoTabItem(
+              icon: Icons.emoji_events,
+              label: 'Metas',
+            ),
+
+            DuoTabItem(
+              icon: Icons.person,
+              label: 'Perfil',
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+24. Sample List Item Screen
+
+Crie:
+
+lib/screens/sample_list_item_screen.dart
+import 'package:flutter/material.dart';
+
+import '../components/list_item/list_item_component.dart';
+
+class SampleListItemScreen
+    extends StatelessWidget {
+
+  const SampleListItemScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: const Text(
+          'List Item',
+        ),
+      ),
+
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+
+        children: [
+
+          DuoListItem(
+            title: 'Alimentação',
+            icon: Icons.restaurant,
+            trailing: const Switch(
+              value: true,
+              onChanged: null,
+            ),
+          ),
+
+          DuoListItem(
+            title: 'Exercício físico',
+            icon: Icons.fitness_center,
+            trailing: const Icon(
+              Icons.chevron_right,
+            ),
+          ),
+
+          DuoListItem(
+            title: 'Saúde e bem-estar',
+            icon: Icons.favorite,
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+25. Design System Home
+
+Essa tela é muito importante.
+
+Lembra que na outra vez você rodou o Flutter e falou:
+
+"rodei mas só tem 1 tela"
+
+A solução é ter uma tela principal que funciona como catálogo do Design System.
+
+Crie:
+
+lib/screens/design_system_home_screen.dart
+import 'package:flutter/material.dart';
+
+import 'sample_action_button_screen.dart';
+import 'sample_tab_bar_screen.dart';
+import 'sample_list_item_screen.dart';
+
+class DesignSystemHomeScreen
+    extends StatelessWidget {
+
+  const DesignSystemHomeScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: const Text(
+          'DuoHeart Design System',
+        ),
+      ),
+
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+
+        children: [
+
+          ListTile(
+            title: const Text(
+              'Action Button',
+            ),
+
+            subtitle: const Text(
+              'Botões do DuoHeart',
+            ),
+
+            trailing: const Icon(
+              Icons.chevron_right,
+            ),
+
+            onTap: () {
+
+              Navigator.push(
+                context,
+
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const SampleActionButtonScreen(),
+                ),
+              );
+            },
+          ),
+
+          const Divider(),
+
+          ListTile(
+            title: const Text(
+              'Tab Bar',
+            ),
+
+            subtitle: const Text(
+              'Navegação inferior',
+            ),
+
+            trailing: const Icon(
+              Icons.chevron_right,
+            ),
+
+            onTap: () {
+
+              Navigator.push(
+                context,
+
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const SampleTabBarScreen(),
+                ),
+              );
+            },
+          ),
+
+          const Divider(),
+
+          ListTile(
+            title: const Text(
+              'List Item',
+            ),
+
+            subtitle: const Text(
+              'Itens de listas',
+            ),
+
+            trailing: const Icon(
+              Icons.chevron_right,
+            ),
+
+            onTap: () {
+
+              Navigator.push(
+                context,
+
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const SampleListItemScreen(),
+                ),
+              );
+            },
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+
+Quando rodar o projeto você terá:
+
+DuoHeart Design System
+
+Action Button       >
+Tab Bar             >
+List Item           >
+
+E poderá entrar em cada componente.
+
+Isso é muito mais próximo do que o professor desenhou no quadro.
+
+26. main.dart
+
+Seu main.dart deve ficar pequeno.
+
+Nada de colocar componentes diretamente nele.
+
+import 'package:flutter/material.dart';
+
+import 'common/theme/app_theme.dart';
+import 'screens/design_system_home_screen.dart';
+
+void main() {
+
+  runApp(
+    const MyApp(),
+  );
+
+}
+
+class MyApp extends StatelessWidget {
+
+  const MyApp({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return MaterialApp(
+
+      debugShowCheckedModeBanner: false,
+
+      title: 'DuoHeart Design System',
+
+      theme: AppTheme.theme,
+
+      home:
+          const DesignSystemHomeScreen(),
+
+    );
+  }
+}
+
+Pronto.
+
+Seu main.dart fica só responsável por iniciar o projeto.
+
+27. Como isso se conecta com o Figma
+
+Agora começa a parte interessante.
+
+No seu Figma existe este padrão:
+
+Tela inicial
+
+Tem:
+
+Mascote
+
+DuoHeart
+
+Comece Agora
+
+Faça Login
+
+O botão será:
+
+DuoActionButton(...)
+
+Na tela de perfil:
+
+Qual seu nível?
+
+Iniciante
+Intermediário
+Avançado
+
+Continuar
+
+O botão continuar:
+
+DuoActionButton(...)
+
+As opções posteriormente podem virar outro componente:
+
+DuoOptionCard
+
+Na seleção de interesses:
+
+Alimentação
+Exercício físico
+Monitorar progresso
+Plano exercício
+Saúde e bem-estar
+Metas
+
+Podemos usar:
+
+DuoListItem
+
+Nas telas principais:
+
+Home
+Plano
+Metas
+Treinos
+Perfil
+
+podemos usar:
+
+DuoTabBar
+
+Percebe a diferença?
+
+Ao invés de fazer 17 telas com código repetido, construímos primeiro umas 5 ou 6 peças e depois montamos as telas com elas.
+
+28. Futuramente podemos aumentar o Design System
+
+Depois dos três que o professor pediu, eu criaria:
+
+components/
+
+├── action_button/
+├── duo_tab_bar/
+├── list_item/
+│
+├── text_field/
+├── option_card/
+├── progress_bar/
+├── mascot_message/
+└── exercise_card/
+
+Porque no seu Figma eu consigo identificar vários elementos repetidos.
+
+Por exemplo:
+
+Text Field
+
+Nas telas de login:
+
+Login
+Password
+
+e cadastro:
+
+E-mail
+Confirmar e-mail
+Senha
+Confirmar senha
+Nome
+CPF
+Data nascimento
+
+Pode virar:
+
+DuoTextField
+Option Card
+
+Nas perguntas:
+
+30 dias
+45 dias
+60 dias
+90 dias
+
+Ou:
+
+1 hora
+1:30
+2 horas
+mais de um horário
+
+Pode virar:
+
+DuoOptionCard
+Progress Bar
+
+Quase todo o onboarding tem aquela barra no topo.
+
+Pode virar:
+
+DuoProgressBar
+Mascot Message
+
+Nas telas você tem várias vezes:
+
+Mascote + balão de texto
+
+Pode virar:
+
+DuoMascotMessage
+
+Isso deixa seu projeto muito profissional.
+
+29. Arquitetura final
+
+No final eu quero que seu projeto fique assim:
+
+lib
+│
+├── common
+│   │
+│   ├── constants
+│   │   └── app_assets.dart
+│   │
+│   └── theme
+│       ├── app_colors.dart
+│       ├── app_radius.dart
+│       ├── app_spacing.dart
+│       ├── app_text_styles.dart
+│       └── app_theme.dart
+│
+├── components
+│   │
+│   ├── action_button
+│   │   ├── action_button_component.dart
+│   │   ├── action_button_factory.dart
+│   │   └── action_button_view_model.dart
+│   │
+│   ├── duo_tab_bar
+│   │   ├── duo_tab_bar_component.dart
+│   │   └── duo_tab_item.dart
+│   │
+│   └── list_item
+│       └── list_item_component.dart
+│
+├── screens
+│   ├── design_system_home_screen.dart
+│   ├── sample_action_button_screen.dart
+│   ├── sample_tab_bar_screen.dart
+│   └── sample_list_item_screen.dart
+│
+└── main.dart
+
+Isso é a base que eu seguiria.
+
+30. GitHub
+
+No quadro o professor colocou:
+
+REPO GITHUB
+   ↓
+CÓDIGO
+DOC
+
+Então não entregue só o código.
+
+Seu repositório deveria ter:
+
+DuoHeart-Design-System
+│
+├── assets
+├── docs
+├── lib
+├── test
+├── README.md
+├── pubspec.yaml
+└── .gitignore
+31. README
+
+No README.md, coloque algo mais ou menos assim:
+
+# DuoHeart Design System
+
+Design System desenvolvido em Flutter para a
+disciplina Mobile II.
+
+## Objetivo
+
+Criar componentes visuais reutilizáveis a partir
+do protótipo do DuoHeart desenvolvido no Figma.
+
+## Tecnologias
+
+- Flutter
+- Dart
+- Material Design
+
+## Arquitetura
+
+lib/
+- common/
+- components/
+- screens/
+- main.dart
+
+## Componentes
+
+### Action Button
+
+Componente responsável pelos botões principais
+da aplicação.
+
+Arquivos:
+
+- action_button_component.dart
+- action_button_view_model.dart
+- action_button_factory.dart
+
+### Duo Tab Bar
+
+Componente de navegação inferior da aplicação.
+
+### List Item
+
+Componente utilizado para listas e opções.
+
+## Referência
+
+Interface baseada no protótipo criado no Figma.
+
+## Execução
+
+flutter pub get
+
+flutter run
+
+Depois podemos deixar esse README bem mais bonito para entrega.
+
+32. O que NÃO fazer
+
+Evite essa estrutura:
+
+lib/
+
+main.dart
+tela1.dart
+tela2.dart
+tela3.dart
+botao1.dart
+botao2.dart
+cores.dart
+qualquercoisa.dart
+
+E principalmente não faça:
+
+ElevatedButton(
+  style: ElevatedButton.styleFrom(...)
+)
+
+novamente em cada tela.
+
+O objetivo da tarefa é mostrar reutilização.
+
+33. Ordem que eu faria a atividade
+
+Segue essa ordem exatamente:
+
+Criar/organizar projeto Flutter.
+Criar assets.
+Colocar mascote.
+Configurar pubspec.yaml.
+Criar common.
+Criar cores.
+Criar fontes.
+Criar espaçamentos.
+Criar bordas.
+Criar tema.
+Criar ActionButtonViewModel.
+Criar ActionButtonComponent.
+Criar ActionButtonFactory.
+Criar SampleActionButtonScreen.
+Testar.
+Criar DuoTabBar.
+Criar SampleTabBarScreen.
+Testar.
+Criar DuoListItem.
+Criar SampleListItemScreen.
+Criar DesignSystemHomeScreen.
+Configurar main.dart.
+Rodar tudo.
+Comparar visualmente com o Figma.
+Ajustar cores/tamanho/bordas.
+Subir no GitHub.
+Criar README.
+Tirar prints do Design System funcionando.
+Entregar código + documentação.
+34. Checklist da atividade
+
+Você pode inclusive colocar isso no seu README:
+
+[ ] Projeto Flutter funcionando
+
+[ ] Estrutura common criada
+
+[ ] Design tokens criados
+    [ ] cores
+    [ ] tipografia
+    [ ] spacing
+    [ ] radius
+
+[ ] Action Button
+    [ ] ViewModel
+    [ ] Component
+    [ ] Factory
+    [ ] Sample Screen
+
+[ ] Tab Bar
+    [ ] Component
+    [ ] Model
+    [ ] Sample Screen
+
+[ ] List Item
+    [ ] Component
+    [ ] Sample Screen
+
+[ ] Tela catálogo do Design System
+
+[ ] Assets configurados
+
+[ ] Figma utilizado como referência
+
+[ ] Código enviado ao GitHub
+
+[ ] README criado
+
+[ ] Documentação criada
+
+[ ] Prints do projeto funcionando
+O caminho que eu seguiria no seu DuoHeart
+
+Para a primeira entrega, eu não tentaria transformar todas aquelas telas do Figma em Flutter ainda. Eu faria exatamente o que está no quadro: Design System + componentes + telas demonstrativas + GitHub + documentação.
+
+E usaria estes três componentes como entrega principal:
+
+1. Action Button
+   ViewModel
+   Component
+   Factory
+
+2. Duo Tab Bar
+   Model
+   Component
+
+3. List Item
+   Component
+
+Depois disso a próxima etapa fica muito mais fácil: pegamos tela por tela do seu Figma — Tela Inicial → Login → Cadastro → Montando Perfil → Nível → Interesses → Dias → Horário → Exercícios → Menu — e construímos usando esse Design System, sem ficar repetindo código.
+
+Inclusive agora que vi o ZIP completo do seu Figma e o quadro do professor, já dá para montar o projeto DuoHeart seguindo essa estrutura sem aquela situação anterior de executar e aparecer só uma tela. Aqui a primeira tela será um catálogo navegável dos componentes, exatamente para mostrar que o Design System existe e funciona.
