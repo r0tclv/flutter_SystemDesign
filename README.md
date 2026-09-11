@@ -7,6 +7,9 @@ Design System em Flutter baseado nas telas exportadas do protótipo DuoHeart.
 - **Action Button**: ViewModel, Component e Factory para ações reutilizáveis.
 - **Tab Bar**: navegação inferior com estado selecionado.
 - **List Items**: itens para categorias, preferências e configurações.
+- **Welcome & Login**: entrada, formulário de acesso e chamada principal.
+- **Home Dashboard**: progresso, atalhos selecionáveis e navegação inferior.
+- **Workout Session**: foco do treino, timer funcional e conclusão da sessão.
 
 ## Estrutura
 

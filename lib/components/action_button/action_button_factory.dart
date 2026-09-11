@@ -8,18 +8,25 @@ class ActionButtonFactory {
   static ActionButtonViewModel primary({
     required String text,
     required VoidCallback onPressed,
+    bool enabled = true,
   }) {
-    return ActionButtonViewModel(text: text, onPressed: onPressed);
+    return ActionButtonViewModel(
+      text: text,
+      onPressed: onPressed,
+      enabled: enabled,
+    );
   }
 
   static ActionButtonViewModel secondary({
     required String text,
     required VoidCallback onPressed,
+    bool enabled = true,
   }) {
     return ActionButtonViewModel(
       text: text,
       onPressed: onPressed,
       variant: ActionButtonVariant.secondary,
+      enabled: enabled,
     );
   }
 }

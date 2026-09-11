@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../common/theme/app_spacing.dart';
 import '../common/theme/app_text_styles.dart';
 import 'sample_action_button_screen.dart';
+import 'sample_dashboard_screen.dart';
+import 'sample_login_screen.dart';
 import 'sample_list_item_screen.dart';
 import 'sample_tab_bar_screen.dart';
+import 'sample_workout_screen.dart';
 
 class DesignSystemHomeScreen extends StatelessWidget {
   const DesignSystemHomeScreen({super.key});
@@ -42,6 +45,27 @@ class DesignSystemHomeScreen extends StatelessWidget {
             title: 'List Items',
             subtitle: 'Opções, categorias e preferências',
             onTap: () => _open(context, const SampleListItemScreen()),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _CatalogTile(
+            icon: Icons.waving_hand_outlined,
+            title: 'Welcome & Login',
+            subtitle: 'Entrada, formulário e chamada principal',
+            onTap: () => _open(context, const SampleLoginScreen()),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _CatalogTile(
+            icon: Icons.grid_view_rounded,
+            title: 'Home Dashboard',
+            subtitle: 'Atalhos, progresso e navegação inferior',
+            onTap: () => _open(context, const SampleDashboardScreen()),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _CatalogTile(
+            icon: Icons.timer_outlined,
+            title: 'Workout Session',
+            subtitle: 'Seleção de exercício, timer e conclusão',
+            onTap: () => _open(context, const SampleWorkoutScreen()),
           ),
         ],
       ),
