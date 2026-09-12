@@ -17,6 +17,17 @@ class SampleLoginScreen extends StatefulWidget {
 class _SampleLoginScreenState extends State<SampleLoginScreen> {
   bool showLogin = false;
   bool obscurePassword = true;
+  bool isLoading = false;
+  final formKey = GlobalKey<FormState>();
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    loginController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,22 +64,41 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
           ),
           const SizedBox(height: AppSpacing.lg),
           if (showLogin) ...[
-            _InputField(label: 'Login', icon: Icons.person_outline),
-            const SizedBox(height: AppSpacing.sm),
-            _InputField(
-              label: 'Password',
-              icon: obscurePassword
-                  ? Icons.visibility_off_outlined
-                  : Icons.visibility_outlined,
-              onIconPressed: () =>
-                  setState(() => obscurePassword = !obscurePassword),
-              obscureText: obscurePassword,
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  _InputField(
+                    label: 'Login',
+                    icon: Icons.person_outline,
+                    controller: loginController,
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? 'Informe seu login'
+                        : null,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _InputField(
+                    label: 'Password',
+                    icon: obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    controller: passwordController,
+                    onIconPressed: () =>
+                        setState(() => obscurePassword = !obscurePassword),
+                    obscureText: obscurePassword,
+                    validator: (value) => value == null || value.length < 6
+                        ? 'Use pelo menos 6 caracteres'
+                        : null,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             DuoActionButton(
               viewModel: ActionButtonFactory.primary(
                 text: 'Fazer login',
-                onPressed: () => _showMessage('Login enviado'),
+                onPressed: _submitLogin,
+                isLoading: isLoading,
               ),
             ),
           ] else ...[
@@ -89,6 +119,16 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
     );
   }
 
+  Future<void> _submitLogin() async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => isLoading = true);
+    await Future<void>.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+    setState(() => isLoading = false);
+    _showMessage('Login enviado com sucesso');
+  }
+
   void _showMessage(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
@@ -100,18 +140,24 @@ class _InputField extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onIconPressed;
   final bool obscureText;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   const _InputField({
     required this.label,
     required this.icon,
     this.onIconPressed,
     this.obscureText = false,
+    this.controller,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      controller: controller,
       obscureText: obscureText,
+      validator: validator,
       decoration: InputDecoration(
         hintText: label,
         prefixIcon: const Icon(Icons.circle, size: 8, color: AppColors.primary),

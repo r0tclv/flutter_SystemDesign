@@ -9,6 +9,7 @@ import 'sample_list_item_screen.dart';
 import 'sample_tab_bar_screen.dart';
 import 'sample_workout_screen.dart';
 import 'sample_foundations_screen.dart';
+import 'sample_welcome_screen.dart';
 
 class DesignSystemHomeScreen extends StatelessWidget {
   final bool isDarkMode;
@@ -44,6 +45,13 @@ class DesignSystemHomeScreen extends StatelessWidget {
             style: AppTextStyles.body,
           ),
           const SizedBox(height: AppSpacing.lg),
+          _CatalogTile(
+            icon: Icons.favorite_rounded,
+            title: 'Welcome Screen',
+            subtitle: 'Tela inicial inspirada no protótipo do DuoHeart',
+            onTap: () => _open(context, const SampleWelcomeScreen()),
+          ),
+          const SizedBox(height: AppSpacing.sm),
           _CatalogTile(
             icon: Icons.palette_outlined,
             title: 'Foundations',
