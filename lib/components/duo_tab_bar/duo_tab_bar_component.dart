@@ -35,9 +35,13 @@ class DuoTabBar extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    item.icon,
-                    color: selected ? AppColors.dark : AppColors.muted,
+                  Badge(
+                    isLabelVisible: item.badgeCount != null,
+                    label: Text('${item.badgeCount ?? ''}'),
+                    child: Icon(
+                      item.icon,
+                      color: selected ? AppColors.dark : AppColors.muted,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(

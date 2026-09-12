@@ -13,18 +13,31 @@ class DuoActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPrimary = viewModel.variant == ActionButtonVariant.primary;
+    final isDanger = viewModel.variant == ActionButtonVariant.danger;
+    final height = switch (viewModel.size) {
+      ActionButtonSize.small => 40.0,
+      ActionButtonSize.medium => 52.0,
+      ActionButtonSize.large => 64.0,
+    };
 
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: height,
       child: ElevatedButton(
         onPressed: viewModel.enabled && !viewModel.isLoading
             ? viewModel.onPressed
             : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary ? AppColors.dark : AppColors.white,
-          foregroundColor: isPrimary ? AppColors.white : AppColors.dark,
+          backgroundColor: isDanger
+              ? AppColors.danger
+              : isPrimary
+              ? AppColors.dark
+              : AppColors.white,
+          foregroundColor: isPrimary || isDanger
+              ? AppColors.white
+              : AppColors.dark,
           disabledBackgroundColor: AppColors.border,
+          disabledForegroundColor: AppColors.muted,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),

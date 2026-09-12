@@ -4,6 +4,7 @@ import '../common/theme/app_colors.dart';
 import '../common/theme/app_radius.dart';
 import '../common/theme/app_spacing.dart';
 import '../common/theme/app_text_styles.dart';
+import '../components/progress_bar/progress_bar_component.dart';
 
 class SampleDashboardScreen extends StatefulWidget {
   const SampleDashboardScreen({super.key});
@@ -65,10 +66,13 @@ class _SampleDashboardScreenState extends State<SampleDashboardScreen> {
                     ],
                   ),
                 ),
-                CircularProgressIndicator(
-                  value: .6,
-                  color: AppColors.primary,
-                  backgroundColor: AppColors.white.withValues(alpha: .24),
+                SizedBox(
+                  width: 132,
+                  child: DuoProgressBar(
+                    value: .6,
+                    label: '60%',
+                    valueColor: AppColors.primary,
+                  ),
                 ),
               ],
             ),

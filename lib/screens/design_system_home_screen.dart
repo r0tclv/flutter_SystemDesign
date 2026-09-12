@@ -8,14 +8,32 @@ import 'sample_login_screen.dart';
 import 'sample_list_item_screen.dart';
 import 'sample_tab_bar_screen.dart';
 import 'sample_workout_screen.dart';
+import 'sample_foundations_screen.dart';
 
 class DesignSystemHomeScreen extends StatelessWidget {
-  const DesignSystemHomeScreen({super.key});
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+
+  const DesignSystemHomeScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('DuoHeart Design System')),
+      appBar: AppBar(
+        title: const Text('DuoHeart Design System'),
+        actions: [
+          IconButton(
+            tooltip: isDarkMode ? 'Usar modo claro' : 'Usar modo escuro',
+            onPressed: () => onThemeChanged(!isDarkMode),
+            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
@@ -26,6 +44,13 @@ class DesignSystemHomeScreen extends StatelessWidget {
             style: AppTextStyles.body,
           ),
           const SizedBox(height: AppSpacing.lg),
+          _CatalogTile(
+            icon: Icons.palette_outlined,
+            title: 'Foundations',
+            subtitle: 'Cores, fontes, estados, progresso e alertas',
+            onTap: () => _open(context, const SampleFoundationsScreen()),
+          ),
+          const SizedBox(height: AppSpacing.sm),
           _CatalogTile(
             icon: Icons.touch_app_outlined,
             title: 'Action Button',
