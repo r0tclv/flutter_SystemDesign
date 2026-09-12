@@ -32,7 +32,10 @@ class _SampleDashboardScreenState extends State<SampleDashboardScreen> {
         children: [
           const Text('Olá, vamos cuidar de você?', style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
-          const Text('Escolha um atalho para continuar sua jornada.', style: AppTextStyles.body),
+          const Text(
+            'Escolha um atalho para continuar sua jornada.',
+            style: AppTextStyles.body,
+          ),
           const SizedBox(height: AppSpacing.lg),
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -46,9 +49,19 @@ class _SampleDashboardScreenState extends State<SampleDashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Seu progresso', style: TextStyle(color: AppColors.white)),
+                      Text(
+                        'Seu progresso',
+                        style: TextStyle(color: AppColors.white),
+                      ),
                       SizedBox(height: 6),
-                      Text('3 de 5 dias', style: TextStyle(color: AppColors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+                      Text(
+                        '3 de 5 dias',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -83,14 +96,20 @@ class _SampleDashboardScreenState extends State<SampleDashboardScreen> {
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : AppColors.white,
                     borderRadius: BorderRadius.circular(AppRadius.medium),
-                    border: Border.all(color: isSelected ? AppColors.primary : AppColors.border),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                    ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(shortcut.$1, color: AppColors.dark),
                       const SizedBox(height: 6),
-                      Text(shortcut.$2, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      Text(
+                        shortcut.$2,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                 ),
@@ -103,10 +122,22 @@ class _SampleDashboardScreenState extends State<SampleDashboardScreen> {
         selectedIndex: selectedTab,
         onDestinationSelected: (index) => setState(() => selectedTab = index),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.groups_outlined), label: 'Início'),
-          NavigationDestination(icon: Icon(Icons.checklist_outlined), label: 'Plano'),
-          NavigationDestination(icon: Icon(Icons.favorite_outline), label: 'Saúde'),
-          NavigationDestination(icon: Icon(Icons.place_outlined), label: 'Mapa'),
+          NavigationDestination(
+            icon: Icon(Icons.groups_outlined),
+            label: 'Início',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.checklist_outlined),
+            label: 'Plano',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline),
+            label: 'Saúde',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.place_outlined),
+            label: 'Mapa',
+          ),
         ],
       ),
     );

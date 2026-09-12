@@ -25,9 +25,17 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          const Icon(Icons.favorite_rounded, size: 76, color: AppColors.primary),
+          const Icon(
+            Icons.favorite_rounded,
+            size: 76,
+            color: AppColors.primary,
+          ),
           const SizedBox(height: AppSpacing.sm),
-          const Text('DuoHeart', style: AppTextStyles.title, textAlign: TextAlign.center),
+          const Text(
+            'DuoHeart',
+            style: AppTextStyles.title,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(
             height: 220,
             child: Image(
@@ -37,7 +45,9 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            showLogin ? 'Entre para continuar seu plano.' : 'Seu treino começa com um pequeno passo.',
+            showLogin
+                ? 'Entre para continuar seu plano.'
+                : 'Seu treino começa com um pequeno passo.',
             style: AppTextStyles.body.copyWith(color: AppColors.muted),
             textAlign: TextAlign.center,
           ),
@@ -47,8 +57,11 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
             const SizedBox(height: AppSpacing.sm),
             _InputField(
               label: 'Password',
-              icon: obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-              onIconPressed: () => setState(() => obscurePassword = !obscurePassword),
+              icon: obscurePassword
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
+              onIconPressed: () =>
+                  setState(() => obscurePassword = !obscurePassword),
               obscureText: obscurePassword,
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -77,7 +90,8 @@ class _SampleLoginScreenState extends State<SampleLoginScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
 

@@ -48,7 +48,8 @@ class _SampleWorkoutScreenState extends State<SampleWorkoutScreen> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: exercises.length,
-              separatorBuilder: (context, index) => const SizedBox(width: AppSpacing.sm),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: AppSpacing.sm),
               itemBuilder: (context, index) {
                 final exercise = exercises[index];
                 final selected = selectedExercise == index;
@@ -60,11 +61,17 @@ class _SampleWorkoutScreenState extends State<SampleWorkoutScreen> {
                     decoration: BoxDecoration(
                       color: selected ? AppColors.primary : AppColors.white,
                       borderRadius: BorderRadius.circular(AppRadius.medium),
-                      border: Border.all(color: selected ? AppColors.primary : AppColors.border),
+                      border: Border.all(
+                        color: selected ? AppColors.primary : AppColors.border,
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Icon(exercise.$1), const SizedBox(height: 6), Text(exercise.$2)],
+                      children: [
+                        Icon(exercise.$1),
+                        const SizedBox(height: 6),
+                        Text(exercise.$2),
+                      ],
                     ),
                   ),
                 );
@@ -80,11 +87,18 @@ class _SampleWorkoutScreenState extends State<SampleWorkoutScreen> {
             ),
             child: Column(
               children: [
-                const Icon(Icons.self_improvement_rounded, size: 96, color: AppColors.primary),
+                const Icon(
+                  Icons.self_improvement_rounded,
+                  size: 96,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Text(_formatTime(elapsedSeconds), style: AppTextStyles.title),
                 const SizedBox(height: AppSpacing.sm),
-                Text(isRunning ? 'Sessão em andamento' : 'Pronto para começar', style: AppTextStyles.body),
+                Text(
+                  isRunning ? 'Sessão em andamento' : 'Pronto para começar',
+                  style: AppTextStyles.body,
+                ),
               ],
             ),
           ),
@@ -122,7 +136,8 @@ class _SampleWorkoutScreenState extends State<SampleWorkoutScreen> {
   void _finishSession() {
     timer?.cancel();
     setState(() => isRunning = false);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sessão concluída')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Sessão concluída')));
   }
 
   String _formatTime(int seconds) {
